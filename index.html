@@ -241,7 +241,7 @@
 <header class="topbar">
   <div class="wrap">
     <a class="brand-mark" href="#top">
-      <span class="dot">N</span>
+      <img src="https://instagram.fsdu25-1.fna.fbcdn.net/v/t51.82787-19/784518220_18150708643526075_6039185878605330549_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=109&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=b943XFRb_BoQ7kNvwFZF0q8&_nc_oc=AdoyPZAaUDHSt6qx8DT_nczrxzIhIptrXrxFvBrwP0dn1OrxH0JyIKA4x5-tnpUPEYB-znvZrQcOV1dkNq3TFgmq&_nc_zt=24&_nc_ht=instagram.fsdu25-1.fna&_nc_gid=j8hA4pxJJ3kWKMCrz3_kkQ&_nc_ss=7b2a8&oh=00_AQFgo9mEbueuov05XKL_5Yw2w10uBhoNl3Jh8_OvijXBpA&oe=6A925B78" class="dot" style="object-fit: cover; border: none; background: transparent;" alt="Logo">
       nexua
     </a>
     <nav class="cats" id="catNav">
@@ -255,7 +255,7 @@
 
 <section class="hero" id="top">
   <div class="wrap">
-    <div class="avatar">N</div>
+    <img src="https://instagram.fsdu25-1.fna.fbcdn.net/v/t51.82787-19/784518220_18150708643526075_6039185878605330549_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=109&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=b943XFRb_BoQ7kNvwFZF0q8&_nc_oc=AdoyPZAaUDHSt6qx8DT_nczrxzIhIptrXrxFvBrwP0dn1OrxH0JyIKA4x5-tnpUPEYB-znvZrQcOV1dkNq3TFgmq&_nc_zt=24&_nc_ht=instagram.fsdu25-1.fna&_nc_gid=j8hA4pxJJ3kWKMCrz3_kkQ&_nc_ss=7b2a8&oh=00_AQFgo9mEbueuov05XKL_5Yw2w10uBhoNl3Jh8_OvijXBpA&oe=6A925B78" class="avatar" style="object-fit: cover;" alt="Logo">
     <h1>Achadinhos que valem o clique</h1>
     <p>
       🔥 <strong>Achadinhos e ofertas da Shopee</strong> testados e aprovados, direto do @nexua2026.
@@ -279,6 +279,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const dealGrid = document.getElementById('dealGrid');
+  const dealCount = document.getElementById('dealCount');
+
+  // Captura erros globais para ajudar a debugar caso o script falhe
+  window.onerror = function(msg, url, line, col, error) {
+    dealGrid.innerHTML = '<div class="empty-state show" style="grid-column: 1 / -1;">Erro crítico no script: ' + msg + '<br>Verifique se o seu navegador bloqueou o carregamento de scripts.</div>';
+    dealCount.textContent = "Erro";
+  };
+
   // Inicializa o cliente Supabase com as credenciais lidas do log
   const supabaseUrl = 'https://sswbatfjamcrlbdltsbq.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzd2JhdGZqYW1jcmxiZGx0c2JxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTU1NTksImV4cCI6MjA4Njk5MTU1OX0.-jtdUMc2jpS7EKOVGAVpz3eyA9mj4JrqdeBsErZnhk4';
