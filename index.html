@@ -268,59 +268,108 @@
   <div class="wrap">
     <div class="section-label">
       <h2>Achadinhos ativos</h2>
-      <span id="dealCount">1 no ar</span>
+      <span id="dealCount">Carregando...</span>
     </div>
 
     <div class="deal-grid" id="dealGrid">
-
-      <!-- CARD 1 -->
-      <div class="deal-card" data-cat="entretenimento" style="animation-delay:0.02s">
-        <div class="deal-media">
-          <!-- AQUI ENTRA A URL DA IMAGEM, NÃO O BASE64 -->
-          <img src="https://down-ws-br.img.susercontent.com/br-11134103-7r98o-lx2r9x9x9x9x9x" alt="Amplificador Lupa 3D">
-          <span class="deal-badge">40% OFF</span>
-        </div>
-        <div class="deal-body">
-          <h3 class="deal-title">Amplificador de Imagem da Tela do Celular — Lupa 3D</h3>
-          <p class="deal-benefit">Amplia a tela em até 3x sem perder qualidade</p>
-          <div class="deal-spacer"></div>
-          <div class="price-row">
-            <span class="price-now">R$ 17,99</span>
-            <span class="price-was">R$ 29,99</span>
-          </div>
-          <a href="https://s.shopee.com.br/4LIpgQe7ka" target="_blank" class="cta">
-            Eu Quero! 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-      </div>
-
+      <!-- Cards serão injetados via JavaScript pelo Supabase -->
     </div>
   </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Filtro simples de categorias
-  const catBtns = document.querySelectorAll('.cat-btn');
-  const cards = document.querySelectorAll('.deal-card');
+  // Inicializa o cliente Supabase com as credenciais lidas do log
+  const supabaseUrl = 'https://sswbatfjamcrlbdltsbq.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzd2JhdGZqYW1jcmxiZGx0c2JxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTU1NTksImV4cCI6MjA4Njk5MTU1OX0.-jtdUMc2jpS7EKOVGAVpz3eyA9mj4JrqdeBsErZnhk4';
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-  catBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Remove classe ativa de todos
-      catBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  const dealGrid = document.getElementById('dealGrid');
+  const dealCount = document.getElementById('dealCount');
+  let allProducts = [];
+
+  // Função principal para buscar produtos no banco
+  async function loadProducts() {
+    try {
+      const { data, error } = await supabase
+        .from('achadinhos_produtos')
+        .select('*')
+        .order('ordem', { ascending: true });
+
+      if (error) throw error;
       
-      const filter = btn.dataset.filter;
+      allProducts = data || [];
+      renderProducts('all');
+      setupFilters();
+    } catch (error) {
+      console.error("Erro ao carregar produtos:", error);
+      dealGrid.innerHTML = '<div class="empty-state show">Erro ao conectar com o banco de dados.</div>';
+      dealCount.textContent = "0 no ar";
+    }
+  }
+
+  // Renderiza os produtos baseados no filtro selecionado
+  function renderProducts(filterCat) {
+    dealGrid.innerHTML = ''; // Limpa a vitrine
+    let count = 0;
+    
+    allProducts.forEach((p, index) => {
+      // Aplica o filtro de categoria
+      if (filterCat !== 'all' && p.categoria !== filterCat) return;
+      count++;
       
-      cards.forEach(card => {
-        if (filter === 'all' || card.dataset.cat === filter) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
+      // Formata moedas para padrão BRL
+      const precoAtualFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.preco_atual);
+      const precoAntigoFmt = p.preco_antigo ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.preco_antigo) : '';
+      
+      const card = document.createElement('div');
+      card.className = 'deal-card';
+      card.dataset.cat = p.categoria;
+      card.style.animationDelay = `${index * 0.05}s`;
+      
+      card.innerHTML = `
+        <div class="deal-media">
+          <img src="${p.imagem_url}" alt="${p.nome}">
+          ${p.badge ? `<span class="deal-badge">${p.badge}</span>` : ''}
+          ${p.avaliacao ? `<span class="deal-rating">★ ${p.avaliacao}</span>` : ''}
+        </div>
+        <div class="deal-body">
+          <h3 class="deal-title">${p.nome}</h3>
+          <p class="deal-benefit">${p.beneficio}</p>
+          <div class="deal-spacer"></div>
+          <div class="price-row">
+            <span class="price-now">${precoAtualFmt}</span>
+            <span class="price-was">${precoAntigoFmt}</span>
+          </div>
+          <a href="${p.link_afiliado}" target="_blank" class="cta">
+            Eu Quero! 
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      `;
+      dealGrid.appendChild(card);
+    });
+    
+    dealCount.textContent = `${count} no ar`;
+    if (count === 0) {
+      dealGrid.innerHTML = '<div class="empty-state show" style="grid-column: 1 / -1;">Nenhum achadinho encontrado.</div>';
+    }
+  }
+
+  // Configura os botões de filtro
+  function setupFilters() {
+    const catBtns = document.querySelectorAll('.cat-btn');
+    catBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        catBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderProducts(btn.dataset.filter);
       });
     });
-  });
+  }
+
+  // Inicializa
+  loadProducts();
 </script>
 
 </body>
