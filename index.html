@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-
   <style>
     :root{
       --paper:#f6f4ee;
@@ -56,7 +55,6 @@
       --shadow:rgba(0,0,0,0.5);
       --glow:rgba(154,149,255,0.18);
     }
-
     *{box-sizing:border-box;}
     html{scroll-behavior:smooth;}
     html,body{margin:0;padding:0;}
@@ -69,7 +67,6 @@
     }
     a{color:inherit;}
     .wrap{max-width:1180px; margin:0 auto; padding:0 1.25rem;}
-
     /* ---------------- topbar ---------------- */
     .topbar{
       position:sticky; top:0; z-index:40;
@@ -80,12 +77,14 @@
     .topbar .wrap{
       display:flex; align-items:center; justify-content:space-between;
       height:64px;
+      gap:0.75rem;
     }
     .brand-mark{
       display:flex; align-items:center; gap:0.55rem;
       font-family:'Bricolage Grotesque',sans-serif;
       font-weight:800; font-size:1.15rem; letter-spacing:-0.01em;
       text-decoration:none;
+      flex-shrink:0;
     }
     .brand-mark .dot{
       width:30px;height:30px;border-radius:50%;
@@ -107,7 +106,6 @@
     .cat-btn:hover{background:var(--brand-soft); color:var(--ink);}
     .cat-btn.active{background:var(--brand); color:var(--brand-ink);}
     .cat-btn:focus-visible{outline:2px solid var(--brand); outline-offset:2px;}
-
     .menu-toggle{
       display:none;
       appearance:none; border:1px solid var(--line); background:var(--card-bg);
@@ -116,7 +114,6 @@
       color:var(--ink);
     }
     .menu-toggle svg{width:20px;height:20px;}
-
     /* ---------------- hero banner ---------------- */
     .hero{
       position:relative;
@@ -147,19 +144,6 @@
       color:var(--muted); font-size:1rem; line-height:1.6; max-width:460px; margin:0;
     }
     .hero p strong{color:var(--ink); font-weight:700;}
-    .stat-row{
-      display:flex; gap:0.6rem; flex-wrap:wrap; justify-content:center; margin-top:0.35rem;
-    }
-    .stat-chip{
-      display:flex; align-items:baseline; gap:0.35rem;
-      background:var(--card-bg); border:1px solid var(--line);
-      padding:0.45rem 0.9rem; border-radius:999px;
-      font-size:0.82rem; color:var(--muted);
-    }
-    .stat-chip b{
-      font-family:'JetBrains Mono',monospace; color:var(--ink); font-size:0.95rem;
-    }
-
     /* ---------------- grid section ---------------- */
     .grid-section{padding:2.5rem 0 4rem;}
     .section-label{
@@ -171,7 +155,6 @@
     }
     .section-label span{font-size:0.8rem;color:var(--muted); font-variant-numeric:tabular-nums;}
     .section-label::after{content:""; flex:1; height:1px; background:var(--line);}
-
     .deal-grid{
       display:grid;
       grid-template-columns:repeat(4, 1fr);
@@ -179,7 +162,6 @@
     }
     @media (max-width:1020px){ .deal-grid{grid-template-columns:repeat(2, 1fr);} }
     @media (max-width:560px){ .deal-grid{grid-template-columns:1fr;} }
-
     .deal-card{
       background:var(--card-bg);
       border:1px solid var(--line);
@@ -192,7 +174,6 @@
     }
     @keyframes cardIn{ to{ opacity:1; transform:translateY(0);} }
     .deal-card.is-hidden{display:none;}
-
     .deal-media{ position:relative; aspect-ratio:1/1; background:var(--brand-soft); }
     .deal-media img{ width:100%; height:100%; object-fit:cover; display:block; }
     .deal-image-fallback{
@@ -210,7 +191,7 @@
       font-family:'JetBrains Mono',monospace; font-weight:700; font-size:0.72rem;
       padding:0.28rem 0.55rem; border-radius:8px; letter-spacing:0.02em;
     }
-    
+
     .deal-body{
       padding:1rem 1.05rem 1.15rem;
       display:flex; flex-direction:column; gap:0.7rem;
@@ -226,16 +207,13 @@
       display:flex; gap:0.4rem;
     }
     .deal-benefit::before{ content:"✓"; color:var(--brand); font-weight:800; flex-shrink:0; }
-
     .deal-spacer{flex:1;}
-
     .price-row{
       display:flex; align-items:baseline; gap:0.5rem;
       font-family:'JetBrains Mono',monospace;
     }
     .price-now{ font-size:1.3rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; }
     .price-was{ font-size:0.78rem; color:var(--muted); text-decoration:line-through; font-variant-numeric:tabular-nums; }
-
     .cta{
       display:flex;
       align-items:center;
@@ -261,10 +239,27 @@
       display:block;
     }
     .cta:hover{ transform:translateY(-2px); box-shadow:0 10px 20px -10px var(--glow); }
+
+    /* ---------------- mobile fixes ---------------- */
+    @media (max-width:640px){
+      nav.cats{
+        flex:1 1 auto;
+        min-width:0;
+        flex-wrap:nowrap;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:none;
+        justify-content:flex-start;
+        mask-image:linear-gradient(to right, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
+      }
+      nav.cats::-webkit-scrollbar{ display:none; }
+      .cat-btn{ flex-shrink:0; white-space:nowrap; padding:0.45rem 0.7rem; font-size:0.8rem; }
+      .brand-mark{ font-size:1rem; }
+      .brand-mark .dot{ width:26px; height:26px; }
+    }
   </style>
 </head>
 <body>
-
 <header class="topbar">
   <div class="wrap">
     <a class="brand-mark" href="#top">
@@ -273,13 +268,9 @@
     </a>
     <nav class="cats" id="catNav">
       <button class="cat-btn active" data-filter="all">Todos</button>
-      <button class="cat-btn" data-filter="entretenimento">Entretenimento</button>
-      <button class="cat-btn" data-filter="carregamento">Carregamento</button>
-      <button class="cat-btn" data-filter="armazenamento">Armazenamento</button>
     </nav>
   </div>
 </header>
-
 <section class="hero" id="top">
   <div class="wrap">
     <img src="https://instagram.fsdu25-1.fna.fbcdn.net/v/t51.82787-19/784518220_18150708643526075_6039185878605330549_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=109&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=b943XFRb_BoQ7kNvwFZF0q8&_nc_oc=AdoyPZAaUDHSt6qx8DT_nczrxzIhIptrXrxFvBrwP0dn1OrxH0JyIKA4x5-tnpUPEYB-znvZrQcOV1dkNq3TFgmq&_nc_zt=24&_nc_ht=instagram.fsdu25-1.fna&_nc_gid=j8hA4pxJJ3kWKMCrz3_kkQ&_nc_ss=7b2a8&oh=00_AQFgo9mEbueuov05XKL_5Yw2w10uBhoNl3Jh8_OvijXBpA&oe=6A925B78" class="avatar" style="object-fit: cover;" alt="Logo">
@@ -290,38 +281,32 @@
     </p>
   </div>
 </section>
-
 <main class="grid-section">
   <div class="wrap">
     <div class="section-label">
       <h2>Achadinhos ativos</h2>
       <span id="dealCount">Carregando...</span>
     </div>
-
     <div class="deal-grid" id="dealGrid">
       <!-- Cards serão injetados via JavaScript pelo Supabase -->
     </div>
   </div>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const dealGrid = document.getElementById('dealGrid');
   const dealCount = document.getElementById('dealCount');
-
+  const catNav = document.getElementById('catNav');
   // Captura erros globais para ajudar a debugar caso o script falhe
   window.onerror = function(msg, url, line, col, error) {
     dealGrid.innerHTML = '<div class="empty-state show" style="grid-column: 1 / -1;">Erro crítico no script: ' + msg + '<br>Verifique se o seu navegador bloqueou o carregamento de scripts.</div>';
     dealCount.textContent = "Erro";
   };
-
   // Inicializa o cliente Supabase com as credenciais lidas do log
   const supabaseUrl = 'https://sswbatfjamcrlbdltsbq.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzd2JhdGZqYW1jcmxiZGx0c2JxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MTU1NTksImV4cCI6MjA4Njk5MTU1OX0.-jtdUMc2jpS7EKOVGAVpz3eyA9mj4JrqdeBsErZnhk4';
   const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-
   let allProducts = [];
-
   // Função principal para buscar produtos no banco
   async function loadProducts() {
     try {
@@ -329,10 +314,10 @@
         .from('achadinhos_produtos')
         .select('*')
         .order('ordem', { ascending: true });
-
       if (error) throw error;
-      
+
       allProducts = data || [];
+      renderCategoryNav(allProducts);
       renderProducts('all');
       setupFilters();
     } catch (error) {
@@ -341,14 +326,28 @@
       dealCount.textContent = "0 no ar";
     }
   }
-
+  // Gera os botões de categoria dinamicamente a partir dos produtos vindos do Supabase.
+  // Assim, toda nova categoria criada na tabela aparece aqui automaticamente, sem editar o HTML.
+  function renderCategoryNav(produtos) {
+    Array.from(catNav.querySelectorAll('.cat-btn:not([data-filter="all"])')).forEach(b => b.remove());
+    const seen = new Set();
+    produtos.forEach(p => {
+      if (p.categoria && !seen.has(p.categoria)) {
+        seen.add(p.categoria);
+        const btn = document.createElement('button');
+        btn.className = 'cat-btn';
+        btn.dataset.filter = p.categoria;
+        btn.textContent = p.categoria_label || p.categoria;
+        catNav.appendChild(btn);
+      }
+    });
+  }
   // Exibe um fallback quando a URL da imagem estiver vazia, expirada ou bloqueada
   function showImageFallback(media, productName, imageUrl) {
     console.warn('Imagem não carregou:', {
       produto: productName,
       imagem_url: imageUrl || '(vazia)'
     });
-
     media.innerHTML = `
       <div class="deal-image-fallback" role="img" aria-label="Imagem indisponível para ${productName || 'produto'}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -361,26 +360,25 @@
       </div>
     `;
   }
-
   // Renderiza os produtos baseados no filtro selecionado
   function renderProducts(filterCat) {
     dealGrid.innerHTML = ''; // Limpa a vitrine
     let count = 0;
-    
+
     allProducts.forEach((p, index) => {
       // Aplica o filtro de categoria
       if (filterCat !== 'all' && p.categoria !== filterCat) return;
       count++;
-      
+
       // Formata moedas para padrão BRL
       const precoAtualFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.preco_atual);
       const precoAntigoFmt = p.preco_antigo ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.preco_antigo) : '';
-      
+
       const card = document.createElement('div');
       card.className = 'deal-card';
       card.dataset.cat = p.categoria;
       card.style.animationDelay = `${index * 0.05}s`;
-      
+
       card.innerHTML = `
         <div class="deal-media">
           <img class="deal-image" alt="${p.nome || 'Produto'}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
@@ -396,7 +394,7 @@
             <span class="price-was">${precoAntigoFmt}</span>
           </div>
           <a href="${p.link_afiliado}" target="_blank" class="cta">
-            Eu Quero! 
+            Eu Quero!
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
@@ -404,7 +402,6 @@
       const media = card.querySelector('.deal-media');
       const image = card.querySelector('.deal-image');
       const imageUrl = typeof p.imagem_url === 'string' ? p.imagem_url.trim() : '';
-
       if (imageUrl) {
         image.addEventListener('error', () => {
           showImageFallback(media, p.nome, imageUrl);
@@ -413,16 +410,14 @@
       } else {
         showImageFallback(media, p.nome, imageUrl);
       }
-
       dealGrid.appendChild(card);
     });
-    
+
     dealCount.textContent = `${count} no ar`;
     if (count === 0) {
       dealGrid.innerHTML = '<div class="empty-state show" style="grid-column: 1 / -1;">Nenhum achadinho encontrado.</div>';
     }
   }
-
   // Configura os botões de filtro
   function setupFilters() {
     const catBtns = document.querySelectorAll('.cat-btn');
@@ -434,10 +429,8 @@
       });
     });
   }
-
   // Inicializa
   loadProducts();
 </script>
-
 </body>
 </html>
