@@ -42,8 +42,19 @@
         .deal-body { padding: 0.8rem; }
         .deal-title { font-size: 0.82rem; }
       }
+      .deal-card.product-deeplink-target {
+        outline: 3px solid var(--accent, #f59e0b);
+        outline-offset: 3px;
+      }
     `;
     root.document.head.appendChild(style);
+
+    // Complemento carregado separadamente para corrigir a vitrine e tratar
+    // links ?produto=<id> sem alterar o destino afiliado do botão "Eu Quero!".
+    const fixes = root.document.createElement('script');
+    fixes.src = 'site-fixes.js?v=20260829-2';
+    fixes.defer = true;
+    root.document.head.appendChild(fixes);
   }
 
   return { filterProducts, normalizeSearchText };
