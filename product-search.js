@@ -29,5 +29,22 @@
     });
   }
 
+  if (root && root.document) {
+    const style = root.document.createElement('style');
+    style.setAttribute('data-product-grid', 'responsive');
+    style.textContent = `
+      @media (max-width: 1020px) {
+        .deal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+      }
+      @media (max-width: 560px) {
+        .deal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 0.75rem !important; }
+        .deal-card { min-width: 0; }
+        .deal-body { padding: 0.8rem; }
+        .deal-title { font-size: 0.82rem; }
+      }
+    `;
+    root.document.head.appendChild(style);
+  }
+
   return { filterProducts, normalizeSearchText };
 });
