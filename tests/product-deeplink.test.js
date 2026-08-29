@@ -3,20 +3,21 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const searchJs = fs.readFileSync(path.join(__dirname, '..', 'product-search.js'), 'utf8');
+const fixesJs = fs.readFileSync(path.join(__dirname, '..', 'site-fixes.js'), 'utf8');
 
-test('vitrine possui fallback local quando ProductSearch externo nao estiver disponivel', () => {
-  assert.match(html, /function\s+filterVisibleProducts\s*\(/);
-  assert.match(html, /typeof\s+ProductSearch\s*!==\s*['"]undefined['"]/);
-  assert.match(html, /filterVisibleProducts\(allProducts,\s*searchTerm,\s*activeCategory\)/);
+test('carrega complemento com versao para evitar cache antigo', () => {
+  assert.match(searchJs, /site-fixes\.js\?v=/);
 });
 
-test('produto da URL recebe id no card e foco automatico', () => {
-  assert.match(html, /new\s+URLSearchParams\(window\.location\.search\)\.get\(['"]produto['"]\)/);
-  assert.match(html, /card\.dataset\.productId\s*=\s*String\(p\.id\)/);
-  assert.match(html, /scrollIntoView\(/);
+test('produto da URL recebe foco automatico', () => {
+  assert.match(fixesJs, /new URLSearchParams\(window\.location\.search\)/);
+  assert.match(fixesJs, /params\.get\(['"]produto['"]\)/);
+  assert.match(fixesJs, /scrollIntoView\(/);
 });
 
-test('script de busca usa versao para evitar cache antigo', () => {
-  assert.match(html, /product-search\.js\?v=/);
+test('deep link identifica o card pelo mesmo link afiliado sem trocar o href do botao', () => {
+  assert.match(fixesJs, /params\.get\(['"]afiliado['"]\)/);
+  assert.match(fixesJs, /card\.querySelector\(['"]a\.cta['"]\)/);
+  assert.doesNotMatch(fixesJs, /\.href\s*=/);
 });
