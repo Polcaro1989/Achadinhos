@@ -15,30 +15,35 @@ test('seleciona no máximo quatro produtos pela prioridade de ordem', async () =
     { id: 4, ordem: 4 },
     { id: 3, ordem: 3 }
   ];
-
   assert.equal(typeof selectFeaturedProducts, 'function');
   assert.deepEqual(selectFeaturedProducts(products).map(product => product.id), [1, 2, 3, 4]);
 });
 
+test('fallback recupera a vitrine e respeita produto do deep link', async () => {
+  const { createFallbackSearch } = await loadCarouselModule();
+  assert.equal(typeof createFallbackSearch, 'function');
+  const browserRoot = { location: { search: '?produto=b2' } };
+  const search = createFallbackSearch(browserRoot);
+  const products = [
+    { id: 'a1', nome: 'Produto A', categoria: 'casa' },
+    { id: 'b2', nome: 'Produto B', categoria: 'casa' }
+  ];
+  assert.deepEqual(search.filterProducts(products, '', 'all'), [products[1]]);
+});
+
 test('avança e retorna ao início ao chegar no último slide', async () => {
   const { getNextSlideIndex } = await loadCarouselModule();
-
-  assert.equal(typeof getNextSlideIndex, 'function');
   assert.equal(getNextSlideIndex(2, 1, 4), 3);
   assert.equal(getNextSlideIndex(3, 1, 4), 0);
 });
 
 test('volta e retorna ao último slide ao sair do início', async () => {
   const { getNextSlideIndex } = await loadCarouselModule();
-
-  assert.equal(typeof getNextSlideIndex, 'function');
   assert.equal(getNextSlideIndex(1, -1, 4), 0);
   assert.equal(getNextSlideIndex(0, -1, 4), 3);
 });
 
 test('mantém índice zero quando não existem slides', async () => {
   const { getNextSlideIndex } = await loadCarouselModule();
-
-  assert.equal(typeof getNextSlideIndex, 'function');
   assert.equal(getNextSlideIndex(3, 1, 0), 0);
 });
