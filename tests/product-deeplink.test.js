@@ -19,5 +19,5 @@ test('produto da URL recebe foco automatico', () => {
 test('deep link identifica o card pelo mesmo link afiliado sem trocar o href do botao', () => {
   assert.match(fixesJs, /params\.get\(['"]afiliado['"]\)/);
   assert.match(fixesJs, /card\.querySelector\(['"]a\.cta['"]\)/);
-  assert.doesNotMatch(fixesJs, /\.href\s*=/);
+  assert.doesNotMatch(fixesJs, /\.href\s*=(?!=)/);
 });
