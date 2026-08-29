@@ -117,26 +117,90 @@
     .icon-btn svg { width: 18px; height: 18px; }
 
     /* =========================================================
-       HERO
+       BANNER DE DESTAQUES
     ========================================================= */
-    .hero {
-      overflow: hidden; padding: 3.25rem 0 2.75rem;
+    .carousel-section { padding: 1.25rem 0 0; }
+    .product-carousel {
+      position: relative; min-height: 360px; overflow: hidden;
+      border-radius: 24px; background: var(--brand-soft);
+      box-shadow: 0 20px 45px -30px var(--shadow);
+    }
+    .carousel-slide {
+      display: none; grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
+      min-height: 360px; background: var(--card-bg);
+    }
+    .carousel-slide.active { display: grid; animation: carouselFade 0.45s ease; }
+    @keyframes carouselFade { from { opacity: 0.35; } to { opacity: 1; } }
+    .carousel-copy {
+      display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+      gap: 0.9rem; padding: clamp(2rem, 5vw, 4.5rem);
       background:
-        radial-gradient(circle at 12% 20%, var(--glow), transparent 45%),
-        radial-gradient(circle at 88% 0%, var(--glow), transparent 40%);
+        radial-gradient(circle at 10% 20%, var(--glow), transparent 48%),
+        var(--card-bg);
     }
-    .hero .wrap { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.1rem; }
-    .avatar {
-      width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
-      box-shadow: 0 10px 24px -8px var(--shadow);
+    .carousel-kicker {
+      display: inline-flex; padding: 0.38rem 0.65rem; border-radius: 999px;
+      background: var(--deal-soft); color: var(--deal);
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
     }
-    .hero h1 {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 800; letter-spacing: -0.02em; text-wrap: balance;
+    .carousel-title {
+      max-width: 520px; font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(1.65rem, 3.4vw, 2.75rem); line-height: 1.05;
+      font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;
     }
-    .hero p { color: var(--muted); font-size: 1rem; line-height: 1.6; max-width: 460px; }
-    .hero p strong { color: var(--ink); font-weight: 700; }
+    .carousel-price { font: 700 clamp(1.25rem, 2vw, 1.65rem) 'JetBrains Mono', monospace; }
+    .carousel-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      min-height: 46px; padding: 0.75rem 1.05rem; border-radius: var(--radius-btn);
+      background: var(--brand); color: var(--brand-ink); font-size: 0.9rem; font-weight: 800;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .carousel-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px var(--glow); }
+    .carousel-media { min-height: 360px; background: var(--brand-soft); overflow: hidden; }
+    .carousel-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .carousel-control {
+      position: absolute; top: 50%; z-index: 4; transform: translateY(-50%);
+      width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 50%; background: rgba(20,21,31,0.62); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.45rem; cursor: pointer; backdrop-filter: blur(8px);
+    }
+    .carousel-control:hover, .carousel-control:focus-visible { background: var(--brand); outline: 3px solid var(--brand-soft); }
+    .carousel-prev { left: 1rem; }
+    .carousel-next { right: 1rem; }
+    .carousel-footer {
+      position: absolute; z-index: 4; left: 50%; bottom: 1rem; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 0.45rem; padding: 0.38rem 0.55rem;
+      border-radius: 999px; background: rgba(20,21,31,0.62); backdrop-filter: blur(8px);
+    }
+    .carousel-dot {
+      width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%;
+      background: rgba(255,255,255,0.5); cursor: pointer;
+    }
+    .carousel-dot.active { width: 24px; border-radius: 999px; background: #fff; }
+    .carousel-pause {
+      width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%;
+      background: transparent; color: #fff; cursor: pointer; font-size: 0.8rem;
+    }
+    .carousel-skeleton { min-height: 360px; background: linear-gradient(100deg, var(--brand-soft) 20%, var(--card-bg) 45%, var(--brand-soft) 70%); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @media (max-width: 720px) {
+      .carousel-section { padding-top: 0.75rem; }
+      .carousel-section .wrap { padding: 0 0.75rem; }
+      .product-carousel, .carousel-slide { min-height: 390px; border-radius: 18px; }
+      .carousel-slide { grid-template-columns: 1fr; grid-template-rows: 215px 1fr; }
+      .carousel-media { min-height: 215px; grid-row: 1; }
+      .carousel-copy { grid-row: 2; padding: 1.25rem 1.25rem 3.5rem; gap: 0.6rem; }
+      .carousel-title { font-size: 1.45rem; line-height: 1.12; }
+      .carousel-price { font-size: 1.15rem; }
+      .carousel-cta { min-height: 42px; padding: 0.62rem 0.85rem; }
+      .carousel-control { width: 38px; height: 38px; top: 108px; }
+      .carousel-prev { left: 0.65rem; }
+      .carousel-next { right: 0.65rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .carousel-slide.active, .carousel-skeleton { animation: none; }
+    }
 
     /* =========================================================
        DEAL GRID
@@ -457,11 +521,11 @@
     </div>
   </header>
 
-  <section class="hero" id="top">
+  <section class="carousel-section" id="top" aria-label="Produtos em destaque">
     <div class="wrap">
-      <img src="https://instagram.fsdu25-1.fna.fbcdn.net/v/t51.82787-19/784518220_18150708643526075_6039185878605330549_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=109&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=b943XFRb_BoQ7kNvwFZF0q8&_nc_oc=AdoyPZAaUDHSt6qx8DT_nczrxzIhIptrXrxFvBrwP0dn1OrxH0JyIKA4x5-tnpUPEYB-znvZrQcOV1dkNq3TFgmq&_nc_zt=24&_nc_ht=instagram.fsdu25-1.fna&_nc_gid=j8hA4pxJJ3kWKMCrz3_kkQ&_nc_ss=7b2a8&oh=00_AQFgo9mEbueuov05XKL_5Yw2w10uBhoNl3Jh8_OvijXBpA&oe=6A925B78" class="avatar" alt="Logo">
-      <h1>Achadinhos que valem o clique</h1>
-      <p>🔥 <strong>Achadinhos e ofertas da Shopee</strong> testados e aprovados, direto do @nexua2026. Toca no card do produto pra garantir o seu.</p>
+      <div class="product-carousel" id="productCarousel" aria-roledescription="carrossel" aria-live="off">
+        <div class="carousel-skeleton" aria-label="Carregando destaques"></div>
+      </div>
     </div>
   </section>
 
@@ -659,6 +723,7 @@
 <!-- ====================== SCRIPTS ====================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="product-search.js"></script>
+<script src="product-carousel.js"></script>
 <script>
   /* --------------------------------------------------------
      CONFIG
@@ -786,6 +851,7 @@
       if (error) throw error;
       allProducts = data || [];
       renderCategoryNav(allProducts);
+      renderCarousel(allProducts);
       renderProducts();
       setupFilters();
       setupSearch();
@@ -793,6 +859,100 @@
       grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">Erro ao carregar produtos.</div>';
       count.textContent = '0 no ar';
     }
+  }
+
+  let carouselProducts = [];
+  let carouselIndex = 0;
+  let carouselTimer = null;
+  let carouselManuallyPaused = false;
+  let carouselTouchStartX = 0;
+
+  function renderCarousel(products) {
+    const carousel = document.getElementById('productCarousel');
+    carouselProducts = ProductCarousel.selectFeaturedProducts(products);
+    carouselIndex = 0;
+    if (!carouselProducts.length) {
+      carousel.closest('.carousel-section').hidden = true;
+      return;
+    }
+
+    const fmt = value => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    carousel.innerHTML = carouselProducts.map((product, index) => `
+      <article class="carousel-slide${index === 0 ? ' active' : ''}" role="group" aria-roledescription="slide" aria-label="${index + 1} de ${carouselProducts.length}">
+        <div class="carousel-copy">
+          <span class="carousel-kicker">Oferta em destaque</span>
+          <h1 class="carousel-title">${product.nome}</h1>
+          <div class="carousel-price">${fmt(product.preco_atual)}</div>
+          <a class="carousel-cta" href="${product.link_afiliado}" target="_blank" rel="noopener">Ver oferta <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="carousel-media">
+          <img src="${product.imagem_url || ''}" alt="${product.nome || 'Produto em destaque'}" decoding="async" referrerpolicy="no-referrer">
+        </div>
+      </article>`).join('') + `
+      <button class="carousel-control carousel-prev" type="button" aria-label="Produto anterior">‹</button>
+      <button class="carousel-control carousel-next" type="button" aria-label="Próximo produto">›</button>
+      <div class="carousel-footer">
+        ${carouselProducts.map((_, index) => `<button class="carousel-dot${index === 0 ? ' active' : ''}" type="button" data-slide="${index}" aria-label="Ir para produto ${index + 1}"${index === 0 ? ' aria-current="true"' : ''}></button>`).join('')}
+        <button class="carousel-pause" type="button" aria-label="Pausar rotação" title="Pausar rotação">Ⅱ</button>
+      </div>`;
+
+    carousel.querySelector('.carousel-prev').addEventListener('click', () => moveCarousel(-1, true));
+    carousel.querySelector('.carousel-next').addEventListener('click', () => moveCarousel(1, true));
+    carousel.querySelectorAll('.carousel-dot').forEach(dot => dot.addEventListener('click', () => showCarouselSlide(Number(dot.dataset.slide), true)));
+    carousel.querySelector('.carousel-pause').addEventListener('click', toggleCarouselPause);
+    carousel.addEventListener('mouseenter', stopCarouselTimer);
+    carousel.addEventListener('mouseleave', () => { if (!carouselManuallyPaused) startCarouselTimer(); });
+    carousel.addEventListener('focusin', stopCarouselTimer);
+    carousel.addEventListener('touchstart', event => { carouselTouchStartX = event.changedTouches[0].clientX; }, { passive: true });
+    carousel.addEventListener('touchend', handleCarouselSwipe, { passive: true });
+    startCarouselTimer();
+  }
+
+  function showCarouselSlide(index, userInitiated = false) {
+    carouselIndex = index;
+    const carousel = document.getElementById('productCarousel');
+    carousel.querySelectorAll('.carousel-slide').forEach((slide, slideIndex) => slide.classList.toggle('active', slideIndex === index));
+    carousel.querySelectorAll('.carousel-dot').forEach((dot, dotIndex) => {
+      dot.classList.toggle('active', dotIndex === index);
+      if (dotIndex === index) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
+    if (userInitiated) pauseCarousel();
+  }
+
+  function moveCarousel(direction, userInitiated = false) {
+    showCarouselSlide(ProductCarousel.getNextSlideIndex(carouselIndex, direction, carouselProducts.length), userInitiated);
+  }
+
+  function startCarouselTimer() {
+    stopCarouselTimer();
+    if (carouselProducts.length < 2 || carouselManuallyPaused || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    carouselTimer = setInterval(() => moveCarousel(1), 6000);
+  }
+
+  function stopCarouselTimer() {
+    clearInterval(carouselTimer);
+    carouselTimer = null;
+  }
+
+  function pauseCarousel() {
+    carouselManuallyPaused = true;
+    stopCarouselTimer();
+    const button = document.querySelector('.carousel-pause');
+    if (button) { button.textContent = '▶'; button.setAttribute('aria-label', 'Retomar rotação'); button.title = 'Retomar rotação'; }
+  }
+
+  function toggleCarouselPause() {
+    if (carouselManuallyPaused) {
+      carouselManuallyPaused = false;
+      this.textContent = 'Ⅱ'; this.setAttribute('aria-label', 'Pausar rotação'); this.title = 'Pausar rotação';
+      startCarouselTimer();
+    } else pauseCarousel();
+  }
+
+  function handleCarouselSwipe(event) {
+    const distance = event.changedTouches[0].clientX - carouselTouchStartX;
+    if (Math.abs(distance) >= 45) moveCarousel(distance < 0 ? 1 : -1, true);
   }
 
   function renderCategoryNav(produtos) {
