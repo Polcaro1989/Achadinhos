@@ -1,21 +1,27 @@
 (function (root, factory) {
-  const api = factory();
+  const api = factory(root);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.ProductSearch = api;
-})(typeof window !== 'undefined' ? window : globalThis, function () {
+})(typeof window !== 'undefined' ? window : globalThis, function (root) {
   function normalizeSearchText(value) {
-    return String(value || '')
-      .normalize('NFD')
+    const text = String(value || '');
+    let normalized = text;
+    try {
+      if (typeof normalized.normalize === 'function') normalized = normalized.normalize('NFD');
+    } catch (_) {}
+    return normalized
       .replace(/[\u0300-\u036f]/g, '')
-      .toLocaleLowerCase('pt-BR')
+      .toLowerCase()
       .trim();
   }
 
-  function filterProducts(products, searchTerm, category) {
+  function normalFilter(products, searchTerm, category) {
+    const list = Array.isArray(products) ? products : [];
     const term = normalizeSearchText(searchTerm);
     const selectedCategory = category || 'all';
 
-    return products.filter(product => {
+    return list.filter(function (product) {
+      if (!product) return false;
       if (selectedCategory !== 'all' && product.categoria !== selectedCategory) return false;
       if (!term) return true;
 
@@ -25,8 +31,33 @@
         product.categoria_label
       ].join(' '));
 
-      return searchableText.includes(term);
+      return searchableText.indexOf(term) !== -1;
     });
+  }
+
+  function filterProductsForView(products, searchTerm, category, targetProductId) {
+    const list = Array.isArray(products) ? products : [];
+    const targetId = String(targetProductId || '').trim();
+    if (targetId) {
+      const target = list.find(function (product) {
+        return product && String(product.id) === targetId;
+      });
+      if (target) return [target];
+    }
+    return normalFilter(list, searchTerm, category);
+  }
+
+  function getTargetProductId() {
+    try {
+      if (!root || !root.location) return '';
+      return new URLSearchParams(root.location.search || '').get('produto') || '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function filterProducts(products, searchTerm, category) {
+    return filterProductsForView(products, searchTerm, category, getTargetProductId());
   }
 
   if (root && root.document) {
@@ -42,20 +73,14 @@
         .deal-body { padding: 0.8rem; }
         .deal-title { font-size: 0.82rem; }
       }
-      .deal-card.product-deeplink-target {
-        outline: 3px solid var(--accent, #f59e0b);
-        outline-offset: 3px;
-      }
     `;
     root.document.head.appendChild(style);
-
-    // Complemento carregado separadamente para corrigir a vitrine e tratar
-    // links ?produto=<id> sem alterar o destino afiliado do botão "Eu Quero!".
-    const fixes = root.document.createElement('script');
-    fixes.src = 'site-fixes.js?v=20260829-2';
-    fixes.defer = true;
-    root.document.head.appendChild(fixes);
   }
 
-  return { filterProducts, normalizeSearchText };
+  return {
+    filterProducts,
+    filterProductsForView,
+    getTargetProductId,
+    normalizeSearchText
+  };
 });
