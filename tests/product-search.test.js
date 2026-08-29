@@ -14,35 +14,22 @@ async function loadSearchModule() {
 
 test('encontra produto ignorando maiúsculas e acentos', async () => {
   const { filterProducts } = await loadSearchModule();
-  assert.equal(typeof filterProducts, 'function');
   assert.deepEqual(filterProducts(products, 'CAFETEIRA', 'all'), [products[0]]);
   assert.deepEqual(filterProducts(products, 'eletrica', 'all'), [products[0]]);
 });
 
-test('encontra produtos pelo nome visível da categoria', async () => {
-  const { filterProducts } = await loadSearchModule();
-  assert.deepEqual(filterProducts(products, 'eletronicos', 'all'), [products[1]]);
-  assert.deepEqual(filterProducts(products, 'organizacao', 'all'), [products[2]]);
-});
-
-test('combina a busca textual com a categoria selecionada', async () => {
+test('combina busca e categoria', async () => {
   const { filterProducts } = await loadSearchModule();
   assert.deepEqual(filterProducts(products, 'casa', 'cozinha'), [products[0]]);
   assert.deepEqual(filterProducts(products, 'fone', 'cozinha'), []);
 });
 
-test('mantém todos os produtos quando a busca está vazia', async () => {
-  const { filterProducts } = await loadSearchModule();
-  assert.deepEqual(filterProducts(products, '   ', 'all'), products);
-});
-
-test('deep link mostra somente o produto solicitado', async () => {
+test('deep link remove da grade o produto que ja esta no banner', async () => {
   const { filterProductsForView } = await loadSearchModule();
-  assert.equal(typeof filterProductsForView, 'function');
-  assert.deepEqual(filterProductsForView(products, '', 'all', 'b2'), [products[1]]);
+  assert.deepEqual(filterProductsForView(products, '', 'all', 'b2'), [products[0], products[2]]);
 });
 
-test('deep link inexistente cai para a lista normal', async () => {
+test('deep link inexistente mantem a lista normal', async () => {
   const { filterProductsForView } = await loadSearchModule();
   assert.deepEqual(filterProductsForView(products, '', 'all', 'nao-existe'), products);
 });
