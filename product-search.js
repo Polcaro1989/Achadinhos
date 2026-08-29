@@ -6,54 +6,34 @@
   function normalizeSearchText(value) {
     const text = String(value || '');
     let normalized = text;
-    try {
-      if (typeof normalized.normalize === 'function') normalized = normalized.normalize('NFD');
-    } catch (_) {}
-    return normalized
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
+    try { if (typeof normalized.normalize === 'function') normalized = normalized.normalize('NFD'); } catch (_) {}
+    return normalized.replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   }
 
   function normalFilter(products, searchTerm, category) {
     const list = Array.isArray(products) ? products : [];
     const term = normalizeSearchText(searchTerm);
     const selectedCategory = category || 'all';
-
     return list.filter(function (product) {
       if (!product) return false;
       if (selectedCategory !== 'all' && product.categoria !== selectedCategory) return false;
       if (!term) return true;
-
-      const searchableText = normalizeSearchText([
-        product.nome,
-        product.categoria,
-        product.categoria_label
-      ].join(' '));
-
-      return searchableText.indexOf(term) !== -1;
+      return normalizeSearchText([product.nome, product.categoria, product.categoria_label].join(' ')).includes(term);
     });
   }
 
   function filterProductsForView(products, searchTerm, category, targetProductId) {
-    const list = Array.isArray(products) ? products : [];
+    const filtered = normalFilter(products, searchTerm, category);
     const targetId = String(targetProductId || '').trim();
-    if (targetId) {
-      const target = list.find(function (product) {
-        return product && String(product.id) === targetId;
-      });
-      if (target) return [target];
-    }
-    return normalFilter(list, searchTerm, category);
+    if (!targetId) return filtered;
+    return filtered.filter(product => String(product.id) !== targetId);
   }
 
   function getTargetProductId() {
     try {
       if (!root || !root.location) return '';
       return new URLSearchParams(root.location.search || '').get('produto') || '';
-    } catch (_) {
-      return '';
-    }
+    } catch (_) { return ''; }
   }
 
   function filterProducts(products, searchTerm, category) {
@@ -77,10 +57,5 @@
     root.document.head.appendChild(style);
   }
 
-  return {
-    filterProducts,
-    filterProductsForView,
-    getTargetProductId,
-    normalizeSearchText
-  };
+  return { filterProducts, filterProductsForView, getTargetProductId, normalizeSearchText };
 });
