@@ -1,0 +1,49 @@
+name: Telegram Auth
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "send_code ou verify_code"
+        required: true
+        default: "send_code"
+        type: choice
+        options:
+          - send_code
+          - verify_code
+      code:
+        description: "Código recebido no Telegram (somente para verify_code)"
+        required: false
+        type: string
+
+jobs:
+  auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r telegram-worker/requirements.txt
+
+      - name: Mask login code
+        if: ${{ inputs.code != '' }}
+        run: echo "::add-mask::${{ inputs.code }}"
+
+      - name: Authenticate Telegram
+        env:
+          TELEGRAM_AUTH_ACTION: ${{ inputs.action }}
+          TELEGRAM_LOGIN_CODE: ${{ inputs.code }}
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_PHONE: ${{ secrets.TELEGRAM_PHONE }}
+          TELEGRAM_2FA_PASSWORD: ${{ secrets.TELEGRAM_2FA_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python telegram-worker/github_auth.py
