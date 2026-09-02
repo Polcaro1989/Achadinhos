@@ -34,7 +34,7 @@ jobs:
 
       - name: Run tests
         working-directory: telegram-worker
-        run: pytest -q
+        run: python -m pytest -q
 
       - name: Mask login code
         if: ${{ inputs.code != '' }}
