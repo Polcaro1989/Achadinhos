@@ -1,0 +1,4 @@
+Telethon>=1.40,<2
+supabase>=2.18,<3
+python-dotenv>=1.1,<2
+pytest>=8,<9

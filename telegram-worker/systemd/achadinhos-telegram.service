@@ -1,0 +1,15 @@
+[Unit]
+Description=Achadinhos Telegram group publisher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/achadinhos/telegram-worker
+EnvironmentFile=/opt/achadinhos/telegram-worker/.env
+ExecStart=/opt/achadinhos/telegram-worker/.venv/bin/python worker.py
+User=achadinhos
+Group=achadinhos
+
+[Install]
+WantedBy=multi-user.target
