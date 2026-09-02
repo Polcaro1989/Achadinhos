@@ -1,0 +1,12 @@
+[Unit]
+Description=Publish one Achadinhos product to Telegram every 4 hours
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=4h
+Persistent=true
+RandomizedDelaySec=5min
+Unit=achadinhos-telegram.service
+
+[Install]
+WantedBy=timers.target
