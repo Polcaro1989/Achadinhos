@@ -2,6 +2,7 @@ import asyncio
 import os
 from datetime import datetime, timedelta, timezone
 
+from auth_state import generate_auth_token
 from supabase import create_client
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
@@ -34,7 +35,7 @@ async def send_code() -> None:
     expires_at = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
     db.table("telegram_auth_pending").delete().eq("phone", phone).execute()
     db.table("telegram_auth_pending").insert({
-        "token": os.urandom(16).hex(),
+        "token": generate_auth_token(),
         "phone": phone,
         "phone_code_hash": sent.phone_code_hash,
         "temp_session": temp_session,
