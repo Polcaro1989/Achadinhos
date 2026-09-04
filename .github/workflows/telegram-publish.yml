@@ -3,7 +3,7 @@ name: Telegram Publish
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 */4 * * *"
+    - cron: "17 */2 * * *"
 
 concurrency:
   group: telegram-publish
