@@ -1,0 +1,102 @@
+name: Shopee Browser Session
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "shopee-browser/start-session.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shopee-browser-session
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      DISPLAY: ":99"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate secrets
+        shell: bash
+        run: |
+          test -n "${SUPABASE_URL:-}" || { echo '::error::SUPABASE_URL is required'; exit 1; }
+          test -n "${SUPABASE_SERVICE_ROLE_KEY:-}" || { echo '::error::SUPABASE_SERVICE_ROLE_KEY is required'; exit 1; }
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+
+      - name: Install browser bridge dependencies
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb x11vnc novnc websockify fluxbox wget ca-certificates
+          pip install -r shopee-browser/requirements.txt
+          python -m playwright install --with-deps chromium
+          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /tmp/cloudflared
+          chmod +x /tmp/cloudflared
+
+      - name: Start visual desktop
+        shell: bash
+        run: |
+          set -euo pipefail
+          VNC_PASSWORD="$(python - <<'PY'
+import secrets
+print(secrets.token_urlsafe(18))
+PY
+)"
+          echo "::add-mask::$VNC_PASSWORD"
+          echo "VNC_PASSWORD=$VNC_PASSWORD" >> "$GITHUB_ENV"
+
+          Xvfb :99 -screen 0 1365x768x24 -ac +extension GLX +render -noreset >/tmp/xvfb.log 2>&1 &
+          sleep 2
+          DISPLAY=:99 fluxbox >/tmp/fluxbox.log 2>&1 &
+          x11vnc -storepasswd "$VNC_PASSWORD" /tmp/x11vnc.pass >/dev/null
+          x11vnc -display :99 -rfbauth /tmp/x11vnc.pass -forever -shared -rfbport 5900 -noxdamage >/tmp/x11vnc.log 2>&1 &
+          websockify --web=/usr/share/novnc/ 6080 localhost:5900 >/tmp/novnc.log 2>&1 &
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:6080/vnc.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo '::error::noVNC did not start'
+          exit 1
+
+      - name: Start private browser link
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/cloudflared tunnel --url http://127.0.0.1:6080 --no-autoupdate >/tmp/cloudflared.log 2>&1 &
+          for i in {1..60}; do
+            TUNNEL_URL="$(grep -oE 'https://[a-zA-Z0-9.-]+\.trycloudflare\.com' /tmp/cloudflared.log | head -n1 || true)"
+            if [[ -n "$TUNNEL_URL" ]]; then
+              NOVNC_URL="${TUNNEL_URL}/vnc.html?autoconnect=true&resize=scale"
+              echo "NOVNC_URL=$NOVNC_URL" >> "$GITHUB_ENV"
+              echo "Browser tunnel is ready. Login details are stored in the private Supabase session table."
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/cloudflared.log
+          echo '::error::Cloudflare tunnel URL was not created'
+          exit 1
+
+      - name: Start Shopee browser bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python shopee-browser/bridge.py
