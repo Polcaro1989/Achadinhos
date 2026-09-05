@@ -3,8 +3,6 @@ name: Shopee Browser Session
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "shopee-browser/start-session.txt"
 
 permissions:
   contents: read
