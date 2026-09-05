@@ -13,7 +13,7 @@ from supabase import create_client
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_ROLE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 NOVNC_URL = os.environ["NOVNC_URL"]
-VNC_PASSWORD = os.environ["VNC_PASSWORD"]
+VNC_PASSWORD = os.environ.get("VNC_PASSWORD")
 GITHUB_RUN_ID = int(os.environ.get("GITHUB_RUN_ID", "0") or 0)
 START_URL = os.environ.get("SHOPEE_START_URL", "https://affiliate.shopee.com.br/")
 PROFILE_DIR = os.environ.get("SHOPEE_PROFILE_DIR", "/tmp/shopee-playwright-profile")
@@ -153,8 +153,6 @@ async def execute_command(context, action, payload):
 
 
 async def update_session(session_id, **values):
-    values["updated_at"] = "now()"
-    # PostgREST treats strings literally, so use an explicit ISO timestamp.
     values["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     supabase.table("shopee_browser_sessions").update(values).eq("id", session_id).execute()
 
