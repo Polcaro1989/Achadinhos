@@ -52,11 +52,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VNC_PASSWORD="$(python - <<'PY'
-import secrets
-print(secrets.token_urlsafe(18))
-PY
-)"
+          VNC_PASSWORD="$(python -c 'import secrets; print(secrets.token_urlsafe(18))')"
           echo "::add-mask::$VNC_PASSWORD"
           echo "VNC_PASSWORD=$VNC_PASSWORD" >> "$GITHUB_ENV"
 
